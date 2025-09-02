@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 export default function Home() {
   return (
     <main className="flex items-center justify-center min-h-screen">
