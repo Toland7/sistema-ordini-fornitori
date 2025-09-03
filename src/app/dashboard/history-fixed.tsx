@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { 
   History, 
@@ -64,33 +64,16 @@ export default function HistoryPage() {
   
   const router = useRouter()
 
-  useEffect(() => {
-    loadData()
+  const calculateStats = useCallback((ordersData: Order[]) => {
+    setStats({
+      total: ordersData.length,
+      pending: ordersData.filter(o => o.status === 'pending').length,
+      sent: ordersData.filter(o => o.status === 'sent').length,
+      confirmed: ordersData.filter(o => o.status === 'confirmed').length
+    })
   }, [])
 
-  useEffect(() => {
-    loadOrders()
-  }, [filters])
-
-  const loadData = async () => {
-    try {
-      setLoading(true)
-      const [ordersData, suppliersData] = await Promise.all([
-        OrderService.getOrders(),
-        SupplierService.getSuppliers()
-      ])
-      
-      setOrders(ordersData)
-      setSuppliers(suppliersData)
-      calculateStats(ordersData)
-    } catch (error) {
-      console.error('Error loading data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       const filteredOrders = await OrderService.getOrders({
         supplier_id: filters.supplier_id || undefined,
@@ -117,16 +100,35 @@ export default function HistoryPage() {
     } catch (error) {
       console.error('Error loading orders:', error)
     }
-  }
+  }, [filters, calculateStats])
 
-  const calculateStats = (ordersData: Order[]) => {
-    setStats({
-      total: ordersData.length,
-      pending: ordersData.filter(o => o.status === 'pending').length,
-      sent: ordersData.filter(o => o.status === 'sent').length,
-      confirmed: ordersData.filter(o => o.status === 'confirmed').length
-    })
-  }
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true)
+      const [ordersData, suppliersData] = await Promise.all([
+        OrderService.getOrders(),
+        SupplierService.getSuppliers()
+      ])
+      
+      setOrders(ordersData)
+      setSuppliers(suppliersData)
+      calculateStats(ordersData)
+    } catch (error) {
+      console.error('Error loading data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [calculateStats])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+  useEffect(() => {
+    if (filters.supplier_id || filters.status || filters.date_from || filters.date_to || filters.search) {
+      loadOrders()
+    }
+  }, [filters, loadOrders])
 
   const clearFilters = () => {
     setFilters({

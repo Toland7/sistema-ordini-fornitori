@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart, Plus, Minus, Send, MessageSquare, Mail } from 'lucide-react'
+import { ShoppingCart, Send, MessageSquare, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
@@ -416,7 +416,7 @@ export default function CreateOrderPage() {
           
           <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>L'ordine è completo?</strong><br />
+              <strong>L&apos;ordine è completo?</strong><br />
               Verifica tutti i prodotti e le quantità prima di inviare.
             </p>
           </div>
