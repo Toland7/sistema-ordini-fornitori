@@ -9,7 +9,7 @@ import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SupplierService } from '@/lib/services/supplierService'
-import { OrderService } from '@/lib/services/orderService'
+import { OrderService } from '@/lib/services/orderServices'
 import { Supplier, CreateOrderData } from '@/types'
 
 interface OrderItem {
